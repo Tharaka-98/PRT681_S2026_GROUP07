@@ -1,0 +1,18 @@
+WEEK 1 - TOOL SETUP LOG
+Student: [Friend Name] | [Student ID]
+
+Visual Studio
+- Installed the IDE and opened the start window.
+- Reviewed workloads and noted .NET / desktop development options.
+- Located Solution Explorer, terminal and debugging controls.
+
+Visual Studio Code
+- Installed VS Code.
+- Reviewed Extensions, Explorer, Search, Source Control and Terminal panels.
+- Added/checked extensions for SQL, Markdown and general code editing.
+- Created a small practice workspace with folders for SQL, Excel and documentation.
+
+Verification completed
+- VS Code terminal opened successfully.
+- A text file and SQL file were created and saved.
+- Git source-control view was reviewed for later GitHub work.
