@@ -1,0 +1,25 @@
+WEEK 5 - BITBUCKET / GIT PRACTICE COMMANDS
+
+# Clone a repository
+git clone <repository-url>
+
+# Create and switch to a branch
+git switch -c reporting-notes
+
+# Check changes
+git status
+
+# Stage one file
+git add Week_5/industry_tools.md
+
+# Save a checkpoint
+git commit -m "docs: add industry tools reference"
+
+# Push the new branch
+git push -u origin reporting-notes
+
+# Update local work later
+git pull
+
+# View a short commit history
+git log --oneline --max-count=10

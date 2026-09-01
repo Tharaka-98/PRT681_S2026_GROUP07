@@ -1,0 +1,27 @@
+-- Week 4 DAX Practice - Service Request Dashboard
+
+Total Requests = COUNTROWS(ServiceRequests)
+
+Closed Requests =
+CALCULATE(
+    [Total Requests],
+    ServiceRequests[Status] = "Closed"
+)
+
+Open Requests =
+CALCULATE(
+    [Total Requests],
+    ServiceRequests[Status] <> "Closed"
+)
+
+Closure Rate % =
+DIVIDE([Closed Requests], [Total Requests], 0)
+
+Average Handling Minutes =
+AVERAGE(ServiceRequests[HandlingMinutes])
+
+Requests Over 60 Minutes =
+CALCULATE(
+    [Total Requests],
+    ServiceRequests[HandlingMinutes] > 60
+)
