@@ -1,0 +1,6 @@
+bin/
+obj/
+verify-bin/
+*.db
+*.db-shm
+*.db-wal
