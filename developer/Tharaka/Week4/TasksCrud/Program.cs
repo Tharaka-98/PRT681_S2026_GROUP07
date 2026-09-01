@@ -1,5 +1,8 @@
 using TasksCrud;
 
+// --- Application entry point (Presentation layer) ---
+// Handles user input and menu navigation; all data goes through TaskRepository.
+
 var repository = new TaskRepository();
 var running = true;
 
@@ -7,6 +10,7 @@ Console.WriteLine("Tasks CRUD Console App");
 Console.WriteLine("Database: SQLite (tasks.db)");
 Console.WriteLine();
 
+// Main event loop — keeps showing menu until user exits
 while (running)
 {
     PrintMenu();
@@ -16,16 +20,16 @@ while (running)
     switch (choice)
     {
         case "1":
-            ListTasks(repository);
+            ListTasks(repository);   // Read
             break;
         case "2":
-            CreateTask(repository);
+            CreateTask(repository);  // Create
             break;
         case "3":
-            UpdateTask(repository);
+            UpdateTask(repository);  // Update
             break;
         case "4":
-            DeleteTask(repository);
+            DeleteTask(repository);  // Delete
             break;
         case "5":
             running = false;
@@ -48,6 +52,9 @@ static void PrintMenu()
     Console.WriteLine("5. Exit");
 }
 
+/// <summary>
+/// Reads all tasks from the database and displays them in the console.
+/// </summary>
 static void ListTasks(TaskRepository repository)
 {
     var tasks = repository.GetAll();
@@ -67,6 +74,9 @@ static void ListTasks(TaskRepository repository)
     }
 }
 
+/// <summary>
+/// Prompts for task details and saves a new record to the database.
+/// </summary>
 static void CreateTask(TaskRepository repository)
 {
     Console.Write("Title: ");
@@ -75,6 +85,7 @@ static void CreateTask(TaskRepository repository)
     Console.Write("Description: ");
     var description = Console.ReadLine()?.Trim() ?? string.Empty;
 
+    // Basic validation — title is mandatory
     if (string.IsNullOrWhiteSpace(title))
     {
         Console.WriteLine("Title is required.");
@@ -85,6 +96,10 @@ static void CreateTask(TaskRepository repository)
     Console.WriteLine($"Task created with Id {id}.");
 }
 
+/// <summary>
+/// Loads an existing task, lets the user edit fields, then saves changes.
+/// Pressing Enter on a field keeps the current value.
+/// </summary>
 static void UpdateTask(TaskRepository repository)
 {
     Console.Write("Task Id: ");
@@ -105,7 +120,7 @@ static void UpdateTask(TaskRepository repository)
     var title = Console.ReadLine()?.Trim();
     if (string.IsNullOrWhiteSpace(title))
     {
-        title = existing.Title;
+        title = existing.Title; // Keep existing value if user skips
     }
 
     Console.Write($"Description ({existing.Description}): ");
@@ -121,7 +136,7 @@ static void UpdateTask(TaskRepository repository)
     {
         "y" or "yes" => true,
         "n" or "no" => false,
-        "" => existing.IsCompleted,
+        "" => existing.IsCompleted,  // Enter = no change
         _ => existing.IsCompleted
     };
 
@@ -135,6 +150,9 @@ static void UpdateTask(TaskRepository repository)
     }
 }
 
+/// <summary>
+/// Removes a task from the database by Id.
+/// </summary>
 static void DeleteTask(TaskRepository repository)
 {
     Console.Write("Task Id: ");

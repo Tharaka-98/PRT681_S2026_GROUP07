@@ -2,6 +2,10 @@ using Microsoft.Data.Sqlite;
 
 namespace TasksCrud;
 
+/// <summary>
+/// Data access layer — handles all SQLite read/write operations.
+/// UI code should call this class instead of writing SQL directly.
+/// </summary>
 public class TaskRepository
 {
     private readonly string _connectionString;
@@ -9,9 +13,12 @@ public class TaskRepository
     public TaskRepository(string databasePath = "tasks.db")
     {
         _connectionString = $"Data Source={databasePath}";
-        InitializeDatabase();
+        InitializeDatabase(); // Ensure table exists on first run
     }
 
+    /// <summary>
+    /// Creates the Tasks table if it does not already exist.
+    /// </summary>
     private void InitializeDatabase()
     {
         using var connection = new SqliteConnection(_connectionString);
@@ -30,6 +37,9 @@ public class TaskRepository
         command.ExecuteNonQuery();
     }
 
+    /// <summary>
+    /// Inserts a new task and returns the generated Id.
+    /// </summary>
     public int Create(string title, string description)
     {
         using var connection = new SqliteConnection(_connectionString);
@@ -41,6 +51,7 @@ public class TaskRepository
             VALUES ($title, $description, 0, $createdAt);
             SELECT last_insert_rowid();
             """;
+        // Parameterized values — safer than string concatenation (prevents SQL injection)
         command.Parameters.AddWithValue("$title", title);
         command.Parameters.AddWithValue("$description", description);
         command.Parameters.AddWithValue("$createdAt", DateTime.UtcNow.ToString("O"));
@@ -48,6 +59,9 @@ public class TaskRepository
         return Convert.ToInt32(command.ExecuteScalar());
     }
 
+    /// <summary>
+    /// Returns all tasks ordered by Id.
+    /// </summary>
     public List<TaskItem> GetAll()
     {
         var tasks = new List<TaskItem>();
@@ -65,12 +79,15 @@ public class TaskRepository
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            tasks.Add(MapTask(reader));
+            tasks.Add(MapTask(reader)); // Convert each DB row to a TaskItem object
         }
 
         return tasks;
     }
 
+    /// <summary>
+    /// Finds a single task by Id. Returns null if not found.
+    /// </summary>
     public TaskItem? GetById(int id)
     {
         using var connection = new SqliteConnection(_connectionString);
@@ -88,6 +105,9 @@ public class TaskRepository
         return reader.Read() ? MapTask(reader) : null;
     }
 
+    /// <summary>
+    /// Updates an existing task. Returns true if a row was changed.
+    /// </summary>
     public bool Update(int id, string title, string description, bool isCompleted)
     {
         using var connection = new SqliteConnection(_connectionString);
@@ -104,11 +124,14 @@ public class TaskRepository
         command.Parameters.AddWithValue("$id", id);
         command.Parameters.AddWithValue("$title", title);
         command.Parameters.AddWithValue("$description", description);
-        command.Parameters.AddWithValue("$isCompleted", isCompleted ? 1 : 0);
+        command.Parameters.AddWithValue("$isCompleted", isCompleted ? 1 : 0); // SQLite stores bool as 0/1
 
         return command.ExecuteNonQuery() > 0;
     }
 
+    /// <summary>
+    /// Deletes a task by Id. Returns true if a row was removed.
+    /// </summary>
     public bool Delete(int id)
     {
         using var connection = new SqliteConnection(_connectionString);
@@ -121,6 +144,9 @@ public class TaskRepository
         return command.ExecuteNonQuery() > 0;
     }
 
+    /// <summary>
+    /// Maps a database row (SqliteDataReader) to a TaskItem object.
+    /// </summary>
     private static TaskItem MapTask(SqliteDataReader reader)
     {
         return new TaskItem
