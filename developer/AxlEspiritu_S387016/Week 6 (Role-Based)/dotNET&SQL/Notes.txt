@@ -1,0 +1,60 @@
+Practical 2: .NET Task Manager with SQL Server
+.NET Console Application
+
+I developed a Task Manager as a C#/.NET console application.
+The application provides menu options for viewing, adding, updating, deleting, and completing tasks.
+I used .NET to build and run the application from Visual Studio Code.
+
+Methods and Program Structure
+
+I separated different Task Manager operations into individual C# methods.
+Methods were created for viewing, adding, updating, deleting, and completing tasks.
+This made the application easier to organise, understand, and maintain.
+
+SQL Server Database
+
+I created a local SQL Server database called TaskManagerDB.
+The database contains a Tasks table with Id, Title, and IsCompleted columns.
+The database permanently stores the tasks created through the console application.
+
+.NET and SQL Server Connection
+
+I used the Microsoft.Data.SqlClient package to connect the .NET application to SQL Server.
+The application uses a connection string to connect to TaskManagerDB on my local SQL Server.
+This allowed my C# code to send SQL commands directly to the database.
+
+Create – INSERT
+
+I implemented the Create operation using the SQL INSERT statement.
+The application asks the user for a task title and sends the information to SQL Server.
+The new task is then permanently stored as a record in the Tasks table.
+
+Read – SELECT
+
+I implemented the Read operation using the SQL SELECT statement.
+The application retrieves task IDs, titles, and completion statuses from the database.
+The retrieved records are displayed to the user through the console.
+
+Update – UPDATE
+
+I used the SQL UPDATE statement to modify existing task information.
+The user can change a task title or mark an existing task as completed.
+The task ID is used to identify which database record should be updated.
+
+Delete – DELETE
+
+I implemented the Delete operation using the SQL DELETE statement.
+The user selects the task to remove by entering its unique task ID.
+The matching task record is then removed from the SQL Server database.
+
+CRUD Operations
+
+CRUD stands for Create, Read, Update, and Delete.
+I implemented these operations using INSERT, SELECT, UPDATE, and DELETE SQL statements.
+This practical demonstrated how a C#/.NET application can manage persistent data stored in SQL Server.
+
+Practical Outcome
+
+I built a C#/.NET Task Manager connected to a local SQL Server database.
+I gained practical experience connecting application code to a relational database and executing SQL commands.
+The project helped me understand how C#, .NET, SQL Server, and CRUD operations work together in a software application.
