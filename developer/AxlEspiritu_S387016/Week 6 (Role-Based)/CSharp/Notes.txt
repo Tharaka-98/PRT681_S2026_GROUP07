@@ -1,0 +1,36 @@
+Practical 1: C# Student Grade Calculator
+C# Console Application
+
+I created a console-based Student Grade Calculator using C#.
+The application accepts a student's name and numerical score through the console.
+It calculates and displays the student's grade and whether the student passed or failed.
+
+Variables and Data Types
+
+Variables are used to store information while the application is running.
+I used string variables for text and a double variable to store the student's numerical score.
+The application stores the student's name, score, calculated grade, and final result in variables.
+
+User Input and Output
+
+I used Console.ReadLine() to collect the student's name and score from the user.
+I used Console.Write() and Console.WriteLine() to display prompts and results.
+This allowed me to create a simple interactive console application.
+
+Conditional Statements
+
+I used if, else if, and else statements to make decisions based on the student's score.
+Different score ranges were checked to determine the appropriate grade.
+Another condition determined whether the student's result was PASS or FAIL.
+
+String Interpolation
+
+I used C# string interpolation to combine variables with text in the program output.
+The $ symbol and curly brackets allow variable values to be inserted directly into a string.
+I used this to display the student's name, score, grade, and result clearly.
+
+Practical Outcome
+
+I created and ran a working C# application that accepts input and performs basic decision-making.
+I gained practical experience with variables, data types, console input/output, conditions, and string interpolation.
+This practical helped me understand how basic C# programming concepts work together in an application.

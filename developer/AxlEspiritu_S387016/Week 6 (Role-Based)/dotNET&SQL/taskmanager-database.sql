@@ -1,0 +1,13 @@
+CREATE DATABASE TaskManagerDB;
+GO
+
+USE TaskManagerDB;
+GO
+
+CREATE TABLE Tasks
+(
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Title NVARCHAR(200) NOT NULL,
+    IsCompleted BIT NOT NULL DEFAULT 0
+);
+GO
