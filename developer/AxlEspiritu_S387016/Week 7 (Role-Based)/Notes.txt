@@ -1,0 +1,237 @@
+Practical 1: ASP.NET Core RESTful API
+ASP.NET Core Web API
+
+I created a RESTful Web API using ASP.NET Core and C#.
+The API provides endpoints that allow applications to create, retrieve, update, and delete tasks.
+I tested the API locally using a /api/tasks endpoint.
+
+Task Model
+
+I created a TaskItem model to define the structure of a task in the application.
+Each task contains an Id, Title, and IsCompleted property.
+The model is used to represent task data when sending and receiving information through the API.
+
+API Controller
+
+I created a TasksController to handle HTTP requests sent to the Task Manager API.
+The controller contains methods for retrieving, creating, updating, and deleting tasks.
+I used ASP.NET Core attributes such as [ApiController], [Route], [HttpGet], and [HttpPost].
+
+REST API Endpoints
+
+API endpoints provide specific URLs through which clients can interact with an application.
+I created endpoints under /api/tasks for performing different Task Manager operations.
+These endpoints were later used by the React frontend to communicate with the backend.
+
+GET – Read
+
+I used an HTTP GET request to retrieve task information from the API.
+The API returned the task information to the client as JSON data.
+I tested the GET endpoint in the browser and Postman and received a successful 200 OK response.
+
+POST – Create
+
+I used an HTTP POST request to send a new task from Postman to the API.
+The request body contained JSON with the task title and completion status.
+The API created the new task and returned a successful 201 Created response.
+
+PUT – Update
+
+I used an HTTP PUT request to modify an existing task through the API.
+The task ID was included in the endpoint so the application could identify which task to update.
+I tested the operation by changing a task's isCompleted value from false to true.
+
+DELETE – Delete
+
+I used an HTTP DELETE request to remove an existing task through the API.
+The ID of the task to delete was included in the /api/tasks/{id} endpoint.
+I confirmed that the operation worked by performing another GET request and checking that the task was removed.
+
+JSON
+
+JSON is a text-based format commonly used to exchange data between applications and APIs.
+My Task Manager API sends and receives task information using JSON objects.
+The JSON data contains values such as id, title, and isCompleted.
+
+Postman
+
+I used Postman to manually test the REST API before connecting it to the frontend.
+I sent GET, POST, PUT, and DELETE requests and checked the returned HTTP responses and JSON data.
+This helped confirm that the backend CRUD functionality worked correctly before full-stack integration.
+
+Practical Outcome
+
+I built and tested an ASP.NET Core REST API that supports CRUD operations for Task Manager data.
+I gained practical experience with controllers, routes, HTTP methods, JSON, and API testing using Postman.
+This practical provided the backend API that was later connected to Entity Framework Core and React.
+
+Practical 2: Entity Framework Core and SQL Server
+Entity Framework Core
+
+Entity Framework Core is an object-relational mapper that allows .NET applications to work with databases using C# objects.
+I added Entity Framework Core to the existing Task Manager ASP.NET Core API.
+I used it to replace the temporary in-memory task list with data stored permanently in SQL Server.
+
+SQL Server Provider
+
+I added the Entity Framework Core SQL Server provider to allow the application to communicate with SQL Server.
+The provider enables EF Core to translate database operations performed in C# into SQL commands.
+This allowed my existing ASP.NET Core API to use the TaskManagerDB database created during Week 1.
+
+DbContext
+
+DbContext manages the connection and interaction between Entity Framework Core and the database.
+I created a TaskDbContext class containing a DbSet<TaskItem> representing the Tasks table.
+The API uses this context to retrieve and modify task records stored in SQL Server.
+
+DbSet
+
+A DbSet represents a collection of entities that corresponds to data stored in a database table.
+I created a DbSet<TaskItem> named Tasks inside my TaskDbContext.
+This allowed the application to perform database operations on Task objects using C#.
+
+Connection String
+
+A connection string tells the application which database server and database it should connect to.
+I configured the application to connect to the local SQL Server and the existing TaskManagerDB.
+The connection configuration was stored in appsettings.json and registered in Program.cs.
+
+Dependency Injection
+
+ASP.NET Core dependency injection provides required services to application classes automatically.
+I registered TaskDbContext in Program.cs and injected it into TasksController.
+This allowed the controller to access Entity Framework Core without manually creating database connections.
+
+Reading Data with EF Core
+
+I used Entity Framework Core to retrieve tasks stored in the SQL Server database.
+The API used _context.Tasks and ToListAsync() to retrieve task records asynchronously.
+The retrieved information was returned through the GET endpoint as JSON.
+
+Creating Data with EF Core
+
+I used _context.Tasks.Add() to add a new Task object to the Entity Framework Core context.
+I then used SaveChangesAsync() to permanently save the new task into SQL Server.
+This replaced the temporary POST functionality that previously stored tasks only in application memory.
+
+Updating Data with EF Core
+
+I used FindAsync() to locate an existing task in the SQL Server database using its ID.
+The task properties could then be changed through the ASP.NET Core PUT endpoint.
+I used SaveChangesAsync() to permanently save those changes to the database.
+
+Deleting Data with EF Core
+
+I used Entity Framework Core to locate and remove Task records from SQL Server.
+The application uses _context.Tasks.Remove() to mark the selected task for deletion.
+SaveChangesAsync() then permanently removes the record from the database.
+
+Data Persistence
+
+Data persistence means information remains stored even after an application stops running.
+The original API used an in-memory list, which caused newly created tasks to disappear whenever the API restarted.
+After connecting Entity Framework Core to SQL Server, I confirmed that task data remained available after restarting the API.
+
+Practical Outcome
+
+I connected my ASP.NET Core Task Manager API to the existing SQL Server database using Entity Framework Core.
+I replaced temporary in-memory CRUD operations with persistent database operations using TaskDbContext.
+This practical demonstrated how ASP.NET Core, Entity Framework Core, and SQL Server work together as a backend application.
+
+Practical 3: React Task Manager Frontend
+React
+
+React is a JavaScript library used to create interactive user interfaces using reusable components.
+I created a React and TypeScript frontend for my existing Task Manager backend.
+The React application allows users to interact with task data through a web browser instead of Postman.
+
+Vite
+
+Vite is a development and build tool commonly used to create and run modern frontend applications.
+I used Vite to create the React TypeScript project and run its local development server.
+My React Task Manager was accessed locally through localhost:5173.
+
+TypeScript
+
+TypeScript extends JavaScript by allowing developers to define types for application data.
+I created a TaskItem type containing id, title, and isCompleted.
+This helped define the expected structure of task information received from the ASP.NET Core API.
+
+React Component
+
+A React component contains the interface and behaviour for part of a web application.
+I modified App.tsx to create the main Task Manager interface.
+The component displays tasks and provides controls for adding, completing, and deleting them.
+
+useState
+
+useState is a React Hook used to store values that can change while the application is running.
+I used state to store the list of tasks retrieved from the API and the title entered into the task input field.
+When the state changes, React automatically updates the information displayed on the page.
+
+useEffect
+
+useEffect is a React Hook used to perform actions when a component loads or when specified values change.
+I used useEffect to call the loadTasks() function when the Task Manager first loads.
+This automatically retrieves the existing task records from the backend API.
+
+Fetch API
+
+The Fetch API allows a frontend application to send HTTP requests to another application or service.
+I used fetch() in React to communicate with my ASP.NET Core /api/tasks endpoints.
+Different HTTP methods were used to retrieve, create, update, and delete task information.
+
+Displaying Tasks
+
+I used React's map() function to display each task returned by the backend API.
+Each displayed task shows its ID, title, and whether its status is Pending or Completed.
+React automatically updates the displayed task list after data is changed through the API.
+
+Adding Tasks
+
+I created an input field and Add Task button that allow users to enter new task information.
+React sends a POST request containing the new task information to the ASP.NET Core API.
+The API and Entity Framework Core then save the new task permanently in SQL Server.
+
+Completing Tasks
+
+I created a Complete button for tasks that are currently marked as Pending.
+Clicking the button sends a PUT request to the ASP.NET Core API with isCompleted set to true.
+After the database is updated, React reloads the tasks and displays the task as Completed.
+
+Deleting Tasks
+
+I created a Delete button that allows a user to remove a task through the React interface.
+Clicking Delete sends an HTTP DELETE request containing the selected task ID to the API.
+The backend removes the task from SQL Server and React refreshes the displayed task list.
+
+CORS
+
+CORS controls whether a web application running on one origin can request resources from another origin.
+My React frontend and ASP.NET Core backend ran on different localhost ports during development.
+I configured the ASP.NET Core application to allow the React frontend to communicate with its API endpoints.
+
+Full-Stack Integration
+Frontend and Backend Communication
+
+The React frontend communicates with the ASP.NET Core backend using HTTP requests.
+ASP.NET Core processes the requests and uses Entity Framework Core to access the SQL Server database.
+The results are returned as JSON and displayed by React in the browser.
+
+Complete Application Architecture
+
+React provides the user interface while ASP.NET Core provides the REST API and backend application logic.
+Entity Framework Core manages communication between the C# application and the SQL Server database.
+Together, these technologies form the full-stack Task Manager application.
+
+CRUD Through the Web Interface
+
+I successfully tested creating, reading, updating, and deleting tasks through the React interface.
+Each frontend action sends the appropriate HTTP request to the ASP.NET Core API and updates SQL Server through Entity Framework Core.
+I confirmed that Add Task, Complete, Delete, and task retrieval all worked successfully.
+
+Week 2 Practical Outcome
+
+I upgraded my Week 1 Task Manager into a full-stack web application using React, ASP.NET Core, Entity Framework Core, and SQL Server.
+I gained practical experience building REST endpoints, testing APIs, managing persistent database data, and connecting a React frontend to a .NET backend.
+The completed application demonstrates a full data flow from the React interface through the REST API and Entity Framework Core to SQL Server.
