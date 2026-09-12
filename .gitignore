@@ -17,3 +17,13 @@ obj/
 
 # OS
 .DS_Store
+
+# Angular / Node
+node_modules/
+.angular/
+dist/
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
