@@ -7,7 +7,7 @@ import { TaskItem } from '../models/task.model';
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'http://taskmanager-api-bxgj.onrender.com/api/tasks';
+  private apiUrl = 'https://taskmanager-api-bxgj.onrender.com/api/tasks';
 
   constructor(private http: HttpClient) {}
 
