@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater Admin - Web API + jQuery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .nav-pills .nav-link.active { background-color: #0d6efd; }
+        .section { display: none; }
+        .section.active { display: block; }
+        #loading { display: none; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand">Theater Admin</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-section="movies-section">Movies</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-section="categories-section">Categories</a>
+            </li>
+        </ul>
+
+        <div id="loading" class="text-center my-3">
+            <div class="spinner-border text-primary"></div>
+            <p>Loading...</p>
+        </div>
+
+        <!-- Alert area -->
+        <div id="alert-area"></div>
+
+        <!-- ==================== MOVIES SECTION ==================== -->
+        <div id="movies-section" class="section active">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Movies</h2>
+                <button class="btn btn-primary" id="btn-add-movie">+ Add Movie</button>
+            </div>
+
+            <table class="table table-striped table-hover" id="movies-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Release Date</th>
+                        <th>Director</th>
+                        <th>Contact Email</th>
+                        <th>Language</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="movies-tbody"></tbody>
+            </table>
+
+            <!-- Movie Form (Create/Edit) -->
+            <div id="movie-form-container" class="card mt-3" style="display:none;">
+                <div class="card-header"><h5 id="movie-form-title">Add Movie</h5></div>
+                <div class="card-body">
+                    <form id="movie-form">
+                        <input type="hidden" id="movie-id">
+                        <div class="mb-3">
+                            <label for="movie-name" class="form-label">Movie Name *</label>
+                            <input type="text" class="form-control" id="movie-name" required maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label for="movie-release-date" class="form-label">Release Date *</label>
+                            <input type="date" class="form-control" id="movie-release-date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="movie-director" class="form-label">Director *</label>
+                            <input type="text" class="form-control" id="movie-director" required maxlength="150">
+                        </div>
+                        <div class="mb-3">
+                            <label for="movie-email" class="form-label">Contact Email *</label>
+                            <input type="email" class="form-control" id="movie-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="movie-language" class="form-label">Language *</label>
+                            <select class="form-select" id="movie-language" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="movie-category" class="form-label">Category *</label>
+                            <select class="form-select" id="movie-category" required></select>
+                        </div>
+                        <button type="submit" class="btn btn-success" id="movie-save-btn">Save</button>
+                        <button type="button" class="btn btn-secondary" id="movie-cancel-btn">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Movie Details -->
+            <div id="movie-details-container" class="card mt-3" style="display:none;">
+                <div class="card-header"><h5>Movie Details</h5></div>
+                <div class="card-body" id="movie-details-body"></div>
+                <div class="card-footer">
+                    <button class="btn btn-secondary" id="movie-details-close">Close</button>
+                </div>
+            </div>
+
+            <!-- Movie Delete Confirmation -->
+            <div id="movie-delete-container" class="card mt-3 border-danger" style="display:none;">
+                <div class="card-header bg-danger text-white"><h5>Confirm Delete</h5></div>
+                <div class="card-body" id="movie-delete-body"></div>
+                <div class="card-footer">
+                    <button class="btn btn-danger" id="movie-delete-confirm">Delete</button>
+                    <button class="btn btn-secondary" id="movie-delete-cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CATEGORIES SECTION ==================== -->
+        <div id="categories-section" class="section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Categories</h2>
+                <button class="btn btn-primary" id="btn-add-category">+ Add Category</button>
+            </div>
+
+            <table class="table table-striped table-hover" id="categories-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="categories-tbody"></tbody>
+            </table>
+
+            <!-- Category Form (Create/Edit) -->
+            <div id="category-form-container" class="card mt-3" style="display:none;">
+                <div class="card-header"><h5 id="category-form-title">Add Category</h5></div>
+                <div class="card-body">
+                    <form id="category-form">
+                        <input type="hidden" id="category-id">
+                        <div class="mb-3">
+                            <label for="category-name" class="form-label">Category Name *</label>
+                            <input type="text" class="form-control" id="category-name" required minlength="2" maxlength="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="category-code" class="form-label">Code *</label>
+                            <input type="text" class="form-control" id="category-code" required minlength="2" maxlength="10">
+                        </div>
+                        <button type="submit" class="btn btn-success" id="category-save-btn">Save</button>
+                        <button type="button" class="btn btn-secondary" id="category-cancel-btn">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Category Details -->
+            <div id="category-details-container" class="card mt-3" style="display:none;">
+                <div class="card-header"><h5>Category Details</h5></div>
+                <div class="card-body" id="category-details-body"></div>
+                <div class="card-footer">
+                    <button class="btn btn-secondary" id="category-details-close">Close</button>
+                </div>
+            </div>
+
+            <!-- Category Delete Confirmation -->
+            <div id="category-delete-container" class="card mt-3 border-danger" style="display:none;">
+                <div class="card-header bg-danger text-white"><h5>Confirm Delete</h5></div>
+                <div class="card-body" id="category-delete-body"></div>
+                <div class="card-footer">
+                    <button class="btn btn-danger" id="category-delete-confirm">Delete</button>
+                    <button class="btn btn-secondary" id="category-delete-cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '/api';
+
+        // ==================== Utility ====================
+        function showAlert(message, type) {
+            const html = `<div class="alert alert-${type} alert-dismissible fade show">
+                ${$('<span>').text(message).html()}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+            $('#alert-area').html(html);
+            setTimeout(() => $('#alert-area .alert').alert('close'), 3000);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            return new Date(dateStr).toLocaleDateString();
+        }
+
+        function toInputDate(dateStr) {
+            if (!dateStr) return '';
+            return dateStr.substring(0, 10);
+        }
+
+        function escapeHtml(text) {
+            return $('<span>').text(text || '').html();
+        }
+
+        // ==================== Tab Navigation ====================
+        $('.nav-link').on('click', function (e) {
+            e.preventDefault();
+            $('.nav-link').removeClass('active');
+            $(this).addClass('active');
+            $('.section').removeClass('active');
+            $('#' + $(this).data('section')).addClass('active');
+        });
+
+        // ==================== MOVIES ====================
+        function loadMovies() {
+            $.getJSON(`${API_BASE}/movies`, function (data) {
+                const tbody = $('#movies-tbody');
+                tbody.empty();
+                if (data.length === 0) {
+                    tbody.append('<tr><td colspan="7" class="text-center text-muted">No movies found.</td></tr>');
+                    return;
+                }
+                $.each(data, function (i, movie) {
+                    tbody.append(`<tr>
+                        <td>${escapeHtml(movie.name)}</td>
+                        <td>${formatDate(movie.releaseDate)}</td>
+                        <td>${escapeHtml(movie.director)}</td>
+                        <td>${escapeHtml(movie.contactEmail)}</td>
+                        <td>${escapeHtml(movie.language !== undefined ? ['English','Japanese','Chinese'][movie.language] : '')}</td>
+                        <td>${escapeHtml(movie.category ? movie.category.name : '')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info movie-details" data-id="${movie.id}">Details</button>
+                            <button class="btn btn-sm btn-warning movie-edit" data-id="${movie.id}">Edit</button>
+                            <button class="btn btn-sm btn-danger movie-delete" data-id="${movie.id}">Delete</button>
+                        </td>
+                    </tr>`);
+                });
+            });
+        }
+
+        function loadMovieDropdowns() {
+            $.getJSON(`${API_BASE}/movies/languages`, function (languages) {
+                const sel = $('#movie-language');
+                sel.empty().append('<option value="">-- Select Language --</option>');
+                $.each(languages, function (i, lang) {
+                    sel.append(`<option value="${i}">${escapeHtml(lang)}</option>`);
+                });
+            });
+            $.getJSON(`${API_BASE}/categories`, function (categories) {
+                const sel = $('#movie-category');
+                sel.empty().append('<option value="">-- Select Category --</option>');
+                $.each(categories, function (i, cat) {
+                    sel.append(`<option value="${cat.id}">${escapeHtml(cat.name)}</option>`);
+                });
+            });
+        }
+
+        function hideMoviePanels() {
+            $('#movie-form-container, #movie-details-container, #movie-delete-container').hide();
+        }
+
+        $('#btn-add-movie').on('click', function () {
+            hideMoviePanels();
+            loadMovieDropdowns();
+            $('#movie-form-title').text('Add Movie');
+            $('#movie-id').val('');
+            $('#movie-form')[0].reset();
+            $('#movie-form-container').show();
+        });
+
+        $('#movie-cancel-btn').on('click', hideMoviePanels);
+        $('#movie-details-close').on('click', hideMoviePanels);
+        $('#movie-delete-cancel').on('click', hideMoviePanels);
+
+        // Create / Edit movie
+        $('#movie-form').on('submit', function (e) {
+            e.preventDefault();
+            const id = $('#movie-id').val();
+            const movie = {
+                id: id ? parseInt(id) : 0,
+                name: $('#movie-name').val(),
+                releaseDate: $('#movie-release-date').val(),
+                director: $('#movie-director').val(),
+                contactEmail: $('#movie-email').val(),
+                language: parseInt($('#movie-language').val()),
+                categoryId: parseInt($('#movie-category').val())
+            };
+
+            if (id) {
+                // PUT update
+                $.ajax({
+                    url: `${API_BASE}/movies/${id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(movie),
+                    success: function () {
+                        showAlert('Movie updated successfully!', 'success');
+                        hideMoviePanels();
+                        loadMovies();
+                    },
+                    error: function () { showAlert('Error updating movie.', 'danger'); }
+                });
+            } else {
+                // POST create
+                $.ajax({
+                    url: `${API_BASE}/movies`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(movie),
+                    success: function () {
+                        showAlert('Movie created successfully!', 'success');
+                        hideMoviePanels();
+                        loadMovies();
+                    },
+                    error: function () { showAlert('Error creating movie.', 'danger'); }
+                });
+            }
+        });
+
+        // Movie Details
+        $(document).on('click', '.movie-details', function () {
+            const id = $(this).data('id');
+            hideMoviePanels();
+            $.getJSON(`${API_BASE}/movies/${id}`, function (movie) {
+                const langNames = ['English', 'Japanese', 'Chinese'];
+                $('#movie-details-body').html(`
+                    <dl class="row">
+                        <dt class="col-sm-3">Name</dt><dd class="col-sm-9">${escapeHtml(movie.name)}</dd>
+                        <dt class="col-sm-3">Release Date</dt><dd class="col-sm-9">${formatDate(movie.releaseDate)}</dd>
+                        <dt class="col-sm-3">Director</dt><dd class="col-sm-9">${escapeHtml(movie.director)}</dd>
+                        <dt class="col-sm-3">Contact Email</dt><dd class="col-sm-9">${escapeHtml(movie.contactEmail)}</dd>
+                        <dt class="col-sm-3">Language</dt><dd class="col-sm-9">${escapeHtml(langNames[movie.language] || '')}</dd>
+                        <dt class="col-sm-3">Category</dt><dd class="col-sm-9">${escapeHtml(movie.category ? movie.category.name : '')}</dd>
+                    </dl>
+                `);
+                $('#movie-details-container').show();
+            });
+        });
+
+        // Movie Edit
+        $(document).on('click', '.movie-edit', function () {
+            const id = $(this).data('id');
+            hideMoviePanels();
+            loadMovieDropdowns();
+            $.getJSON(`${API_BASE}/movies/${id}`, function (movie) {
+                $('#movie-form-title').text('Edit Movie');
+                $('#movie-id').val(movie.id);
+                $('#movie-name').val(movie.name);
+                $('#movie-release-date').val(toInputDate(movie.releaseDate));
+                $('#movie-director').val(movie.director);
+                $('#movie-email').val(movie.contactEmail);
+                // Set dropdowns after a short delay to let them populate
+                setTimeout(function () {
+                    $('#movie-language').val(movie.language);
+                    $('#movie-category').val(movie.categoryId);
+                }, 300);
+                $('#movie-form-container').show();
+            });
+        });
+
+        // Movie Delete
+        let movieDeleteId = null;
+        $(document).on('click', '.movie-delete', function () {
+            const id = $(this).data('id');
+            hideMoviePanels();
+            $.getJSON(`${API_BASE}/movies/${id}`, function (movie) {
+                movieDeleteId = movie.id;
+                $('#movie-delete-body').html(`
+                    <p>Are you sure you want to delete <strong>${escapeHtml(movie.name)}</strong>?</p>
+                    <p class="text-muted">Director: ${escapeHtml(movie.director)} | Category: ${escapeHtml(movie.category ? movie.category.name : '')}</p>
+                `);
+                $('#movie-delete-container').show();
+            });
+        });
+
+        $('#movie-delete-confirm').on('click', function () {
+            if (!movieDeleteId) return;
+            $.ajax({
+                url: `${API_BASE}/movies/${movieDeleteId}`,
+                type: 'DELETE',
+                success: function () {
+                    showAlert('Movie deleted successfully!', 'success');
+                    hideMoviePanels();
+                    loadMovies();
+                    movieDeleteId = null;
+                },
+                error: function () { showAlert('Error deleting movie.', 'danger'); }
+            });
+        });
+
+        // ==================== CATEGORIES ====================
+        function loadCategories() {
+            $.getJSON(`${API_BASE}/categories`, function (data) {
+                const tbody = $('#categories-tbody');
+                tbody.empty();
+                if (data.length === 0) {
+                    tbody.append('<tr><td colspan="3" class="text-center text-muted">No categories found.</td></tr>');
+                    return;
+                }
+                $.each(data, function (i, cat) {
+                    tbody.append(`<tr>
+                        <td>${escapeHtml(cat.name)}</td>
+                        <td>${escapeHtml(cat.code)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info category-details" data-id="${cat.id}">Details</button>
+                            <button class="btn btn-sm btn-warning category-edit" data-id="${cat.id}">Edit</button>
+                            <button class="btn btn-sm btn-danger category-delete" data-id="${cat.id}">Delete</button>
+                        </td>
+                    </tr>`);
+                });
+            });
+        }
+
+        function hideCategoryPanels() {
+            $('#category-form-container, #category-details-container, #category-delete-container').hide();
+        }
+
+        $('#btn-add-category').on('click', function () {
+            hideCategoryPanels();
+            $('#category-form-title').text('Add Category');
+            $('#category-id').val('');
+            $('#category-form')[0].reset();
+            $('#category-form-container').show();
+        });
+
+        $('#category-cancel-btn').on('click', hideCategoryPanels);
+        $('#category-details-close').on('click', hideCategoryPanels);
+        $('#category-delete-cancel').on('click', hideCategoryPanels);
+
+        // Create / Edit category
+        $('#category-form').on('submit', function (e) {
+            e.preventDefault();
+            const id = $('#category-id').val();
+            const category = {
+                id: id ? parseInt(id) : 0,
+                name: $('#category-name').val(),
+                code: $('#category-code').val()
+            };
+
+            if (id) {
+                $.ajax({
+                    url: `${API_BASE}/categories/${id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(category),
+                    success: function () {
+                        showAlert('Category updated successfully!', 'success');
+                        hideCategoryPanels();
+                        loadCategories();
+                    },
+                    error: function () { showAlert('Error updating category.', 'danger'); }
+                });
+            } else {
+                $.ajax({
+                    url: `${API_BASE}/categories`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(category),
+                    success: function () {
+                        showAlert('Category created successfully!', 'success');
+                        hideCategoryPanels();
+                        loadCategories();
+                    },
+                    error: function () { showAlert('Error creating category.', 'danger'); }
+                });
+            }
+        });
+
+        // Category Details
+        $(document).on('click', '.category-details', function () {
+            const id = $(this).data('id');
+            hideCategoryPanels();
+            $.getJSON(`${API_BASE}/categories/${id}`, function (cat) {
+                $('#category-details-body').html(`
+                    <dl class="row">
+                        <dt class="col-sm-3">Name</dt><dd class="col-sm-9">${escapeHtml(cat.name)}</dd>
+                        <dt class="col-sm-3">Code</dt><dd class="col-sm-9">${escapeHtml(cat.code)}</dd>
+                    </dl>
+                `);
+                $('#category-details-container').show();
+            });
+        });
+
+        // Category Edit
+        $(document).on('click', '.category-edit', function () {
+            const id = $(this).data('id');
+            hideCategoryPanels();
+            $.getJSON(`${API_BASE}/categories/${id}`, function (cat) {
+                $('#category-form-title').text('Edit Category');
+                $('#category-id').val(cat.id);
+                $('#category-name').val(cat.name);
+                $('#category-code').val(cat.code);
+                $('#category-form-container').show();
+            });
+        });
+
+        // Category Delete
+        let categoryDeleteId = null;
+        $(document).on('click', '.category-delete', function () {
+            const id = $(this).data('id');
+            hideCategoryPanels();
+            $.getJSON(`${API_BASE}/categories/${id}`, function (cat) {
+                categoryDeleteId = cat.id;
+                $('#category-delete-body').html(`
+                    <p>Are you sure you want to delete category <strong>${escapeHtml(cat.name)}</strong> (${escapeHtml(cat.code)})?</p>
+                `);
+                $('#category-delete-container').show();
+            });
+        });
+
+        $('#category-delete-confirm').on('click', function () {
+            if (!categoryDeleteId) return;
+            $.ajax({
+                url: `${API_BASE}/categories/${categoryDeleteId}`,
+                type: 'DELETE',
+                success: function () {
+                    showAlert('Category deleted successfully!', 'success');
+                    hideCategoryPanels();
+                    loadCategories();
+                    categoryDeleteId = null;
+                },
+                error: function () { showAlert('Error deleting category.', 'danger'); }
+            });
+        });
+
+        // ==================== Initial Load ====================
+        $(document).ready(function () {
+            loadMovies();
+            loadCategories();
+        });
+    </script>
+</body>
+</html>
