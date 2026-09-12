@@ -1,0 +1,8 @@
+-- SQLite schema for Tasks CRUD (Week 5)
+CREATE TABLE IF NOT EXISTS Tasks (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Title TEXT NOT NULL,
+    Description TEXT NOT NULL,
+    IsCompleted INTEGER NOT NULL DEFAULT 0,
+    CreatedAt TEXT NOT NULL
+);
