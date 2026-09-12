@@ -1,0 +1,105 @@
+<div class="page">
+  <div class="card">
+    <header class="header">
+      <h1>Task Manager</h1>
+      <p class="subtitle">Stay on top of what matters</p>
+    </header>
+
+    <form (ngSubmit)="addTask()" class="task-form">
+      <input
+        type="text"
+        [ngModel]="newTitle()"
+        (ngModelChange)="newTitle.set($event)"
+        name="title"
+        placeholder="What needs to be done?"
+        autocomplete="off"
+      />
+      <textarea
+        [ngModel]="newDescription()"
+        (ngModelChange)="newDescription.set($event)"
+        name="description"
+        placeholder="Add a description (optional)"
+        rows="2"
+      ></textarea>
+      <button type="submit" class="btn-add">Add Task</button>
+    </form>
+
+    <div class="status" *ngIf="loading()">
+      <div class="spinner"></div>
+      <span>Loading tasks...</span>
+    </div>
+
+    <ul class="task-list" *ngIf="!loading() && tasks().length > 0">
+      <li
+        *ngFor="let task of tasks()"
+        [class.completed]="task.isComplete"
+        (click)="viewTask(task.id)"
+      >
+        <div class="task-row">
+          <input
+            type="checkbox"
+            [checked]="task.isComplete"
+            (click)="$event.stopPropagation()"
+            (change)="toggleComplete(task, $event)"
+          />
+          <span class="task-title">{{ task.title }}</span>
+        </div>
+        <button class="btn-delete" (click)="deleteTask(task.id, $event)" aria-label="Delete task">
+          Delete
+        </button>
+      </li>
+    </ul>
+
+    <div class="empty-state" *ngIf="!loading() && tasks().length === 0">
+      <p>No tasks yet</p>
+      <span>Add one above to get started</span>
+    </div>
+
+    <footer class="footer" *ngIf="!loading() && tasks().length > 0">
+      {{ tasks().length }} task{{ tasks().length !== 1 ? 's' : '' }} total
+    </footer>
+  </div>
+
+  <div class="toast-container">
+    <div
+      *ngFor="let toast of toasts()"
+      class="toast"
+      [class.toast-success]="toast.type === 'success'"
+      [class.toast-error]="toast.type === 'error'"
+      (click)="dismissToast(toast.id)"
+    >
+      {{ toast.message }}
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="selectedTask() || detailLoading()" (click)="closeDetail()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-loading" *ngIf="detailLoading()">
+        <div class="spinner"></div>
+        <span>Loading...</span>
+      </div>
+
+      <ng-container *ngIf="!detailLoading() && selectedTask() as task">
+        <button class="modal-close" (click)="closeDetail()" aria-label="Close">Close</button>
+
+        <span class="modal-status" [class.status-done]="task.isComplete">
+          {{ task.isComplete ? 'Completed' : 'Pending' }}
+        </span>
+
+        <h2 class="modal-title">{{ task.title }}</h2>
+
+        <p class="modal-description" *ngIf="task.description; else noDescription">
+          {{ task.description }}
+        </p>
+        <ng-template #noDescription>
+          <p class="modal-description modal-description-empty">No description provided</p>
+        </ng-template>
+
+        <div class="modal-meta">
+          <span>Task #{{ task.id }}</span>
+          <span>Created {{ task.createdAt | date: 'medium' }}</span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

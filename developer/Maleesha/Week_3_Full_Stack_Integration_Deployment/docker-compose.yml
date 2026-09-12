@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./TaskManagerApi
+    ports:
+      - "8080:8080"
+    volumes:
+      - taskdata:/app/data
+
+  web:
+    build: ./task-manager-web
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  taskdata:
