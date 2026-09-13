@@ -1,0 +1,27 @@
+{
+  "name": "multi-api-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@progress/kendo-licensing": "^1.11.3",
+    "@progress/kendo-theme-default": "^14.5.0",
+    "@progress/kendo-vue-buttons": "^10.0.0",
+    "@progress/kendo-vue-dialogs": "^10.0.0",
+    "@progress/kendo-vue-dropdowns": "^10.0.0",
+    "@progress/kendo-vue-grid": "^10.0.0",
+    "@progress/kendo-vue-inputs": "^10.0.0",
+    "@progress/kendo-vue-layout": "^10.0.0",
+    "@progress/kendo-vue-notification": "^10.0.0",
+    "vue": "^3.5.42"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.3.0"
+  }
+}
