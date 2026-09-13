@@ -1,0 +1,47 @@
+<main class="container">
+
+  <h1>Angular Task Manager</h1>
+
+  <div class="add-task">
+
+    <input
+      type="text"
+      [(ngModel)]="title"
+      placeholder="Enter a new task"
+      (keyup.enter)="addTask()"
+    />
+
+    <button (click)="addTask()">
+      Add Task
+    </button>
+
+  </div>
+
+  <div
+    *ngFor="let task of tasks"
+    class="task"
+  >
+
+    <span>
+      {{ task.id }}.
+      {{ task.title }}
+      —
+      {{ task.isCompleted ? 'Completed' : 'Pending' }}
+    </span>
+
+    <button
+      *ngIf="!task.isCompleted"
+      (click)="completeTask(task)"
+    >
+      Complete
+    </button>
+
+    <button
+      (click)="deleteTask(task.id)"
+    >
+      Delete
+    </button>
+
+  </div>
+
+</main>
