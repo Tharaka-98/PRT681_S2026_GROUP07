@@ -1,6 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using BookStoreApp.DAL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<EfBookStoreContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EfDbconnectionStg")));
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
