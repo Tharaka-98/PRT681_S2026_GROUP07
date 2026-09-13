@@ -1,0 +1,126 @@
+ANGULAR PRACTICAL
+
+Angular
+Angular is a frontend framework used to build structured and interactive web applications.
+I used Angular with TypeScript to create another frontend for my existing Task Manager application.
+The Angular frontend communicates with my ASP.NET Core REST API to manage task data.
+Angular CLI
+Angular CLI is a command-line tool used to create, develop, build, and manage Angular applications.
+I installed Angular CLI using npm install -g @angular/cli and verified the installation using ng version.
+I used ng new taskmanager-angular to generate my Angular Task Manager project.
+Creating the Angular Project
+I created a new project called taskmanager-angular inside my Week 8 Angular folder.
+I selected CSS for styling and disabled Server-Side Rendering and Static Site Generation because they were unnecessary for this practical.
+I also selected no AI-tool integration so the project remained a simple client-side Angular application.
+Angular Development Server
+I used ng serve to compile and run the Angular application during development.
+The Angular development server ran locally at http://localhost:4200.
+The development server automatically rebuilds the application when source files are changed.
+TypeScript
+Angular uses TypeScript as its primary programming language for application logic.
+I used TypeScript to define the Task Manager component, variables, functions, and task data structure.
+TypeScript helped define properties such as id, title, and isCompleted for each task.
+Angular Component
+Components are the main building blocks used to create Angular user interfaces.
+I used the root App component to contain the logic and interface for my Task Manager.
+The component connects the TypeScript code in app.ts with the HTML template in app.html.
+app.ts
+app.ts contains the TypeScript logic for the main Angular component.
+I used it to store tasks and implement functions for loading, adding, completing, and deleting tasks.
+It also uses Angular's HttpClient to communicate with my ASP.NET Core API.
+app.html
+app.html contains the HTML template displayed by my Angular component.
+I used it to create the Task Manager heading, input field, buttons, and task list.
+Angular template syntax connects the HTML interface to the variables and functions defined in app.ts.
+app.css
+app.css contains the CSS styling associated with the main Angular component.
+I used CSS to control the Task Manager's width, spacing, input field, buttons, and task layout.
+Separating the styling from the TypeScript logic keeps the application easier to organise.
+Data Binding
+Data binding connects information in an Angular component with elements in its HTML template.
+I used [(ngModel)]="title" to connect the task input field with the title variable.
+Changes made in the input field automatically update the corresponding component value.
+FormsModule
+FormsModule provides Angular features for working with HTML forms and user input.
+I imported FormsModule into the component so I could use ngModel.
+This allowed me to implement two-way binding for the new task input field.
+Interpolation
+Angular interpolation uses {{ }} to display component values inside an HTML template.
+I used interpolation to display each task's ID, title, and completion status.
+Angular updates the displayed information when the underlying component data changes.
+Event Binding
+Angular uses event binding to execute component functions when users interact with the interface.
+I used (click)="addTask()", (click)="completeTask(task)", and (click)="deleteTask(task.id)".
+I also used (keyup.enter)="addTask()" so pressing Enter can add a new task.
+Displaying Multiple Tasks
+Angular provides template control-flow features for displaying collections of data.
+I used Angular template iteration to display each task contained in the tasks array.
+Each displayed task shows its ID, title, completion status, and available action buttons.
+Conditional Display
+Conditional rendering allows interface elements to appear only when certain conditions are satisfied.
+I used a condition so the Complete button is displayed only when a task has not already been completed.
+Once the task becomes completed, the interface no longer needs to display its Complete button.
+HttpClient
+HttpClient is Angular's service for sending HTTP requests to external servers and APIs.
+I used HttpClient to communicate with my ASP.NET Core API at http://localhost:5227/api/tasks.
+It allowed the Angular application to perform GET, POST, PUT, and DELETE requests.
+provideHttpClient()
+provideHttpClient() makes Angular's HTTP communication features available to the application.
+I added it to the providers inside app.config.ts.
+This allowed HttpClient to be injected and used inside my Task Manager component.
+Dependency Injection
+Dependency Injection allows Angular to provide required services to components automatically.
+I received HttpClient through the component instead of manually creating the HTTP service.
+This allowed the Task Manager component to use Angular's built-in HTTP functionality.
+Loading Tasks — GET
+I created loadTasks() to send a GET request to my ASP.NET Core API.
+The API returns task records from SQL Server, which are stored in the Angular tasks array.
+I call this function when the application starts and after operations that modify task data.
+Adding Tasks — POST
+I created addTask() to send a POST request containing a new task to the backend.
+The new task contains the entered title and an initial isCompleted value of false.
+After the task is created, the input is cleared and the task list is loaded again.
+Completing Tasks — PUT
+I created completeTask() to send a PUT request for the selected task.
+The request keeps the task's ID and title while changing isCompleted to true.
+After the backend updates the database, Angular reloads the tasks to show the new status.
+Deleting Tasks — DELETE
+I created deleteTask() to send a DELETE request containing the selected task's ID.
+The ASP.NET Core API removes the corresponding task from the SQL Server database.
+Angular reloads the task list afterward so the deleted task disappears from the interface.
+ngOnInit()
+ngOnInit() is an Angular lifecycle method that runs when the component is initialised.
+I used ngOnInit() to call loadTasks() when the Task Manager first opened.
+This allowed existing tasks from the backend to appear automatically when the application loaded.
+ASP.NET Core API Integration
+I reused the ASP.NET Core REST API created during my previous practical rather than building another backend.
+Angular sends requests to the same /api/tasks endpoints previously used by my React and Vue frontends.
+This demonstrated that one REST API can support multiple different frontend frameworks.
+CORS
+My Angular frontend runs on localhost:4200, while the ASP.NET Core API runs on localhost:5227.
+I updated the ASP.NET Core CORS policy to allow requests from the Angular frontend as well as the Vue frontend.
+This allowed Angular to communicate with the API despite the applications running on different origins.
+Angular Runtime Troubleshooting
+My Angular development server initially compiled successfully, but the browser displayed a completely blank page.
+I opened the browser Developer Tools and found the NG0908 runtime error indicating that the configuration required Zone.js.
+This showed that successful compilation does not always mean an application will run successfully in the browser.
+Zoneless Angular
+My newly generated Angular project was configured to work without Zone.js.
+I removed provideZoneChangeDetection() from app.config.ts because it conflicted with the project's zoneless configuration.
+After correcting the configuration, Angular rendered the Task Manager successfully instead of displaying a blank page.
+Full-Stack Architecture
+My Angular frontend sends HTTP requests to an ASP.NET Core REST API written in C#.
+The backend uses Entity Framework Core to communicate with the SQL Server TaskManagerDB database.
+The complete architecture is Angular + TypeScript → ASP.NET Core API → Entity Framework Core → SQL Server.
+Reusing the Same Backend
+I learned that the frontend and backend are separate parts of a full-stack application.
+I was able to replace React with Vue and Angular without rebuilding the ASP.NET Core backend or SQL Server database.
+Each frontend communicates with the backend through the same REST API contract.
+React, Vue, and Angular
+I created Task Manager frontends using React, Vue, and Angular while reusing the same ASP.NET Core backend.
+All three frameworks can manage user interfaces and communicate with REST APIs, but they use different component and data-binding approaches.
+Rebuilding the same application helped me compare how React, Vue, and Angular solve similar frontend development problems.
+Practical Outcome
+I built an Angular and TypeScript Task Manager frontend connected to my existing ASP.NET Core REST API.
+The application can retrieve, add, complete, and delete tasks stored persistently through Entity Framework Core and SQL Server.
+I learned Angular components, templates, data binding, HttpClient, dependency injection, lifecycle methods, CORS, and runtime debugging.

@@ -1,0 +1,110 @@
+VUE.JS PRACTICAL
+
+Vue.js
+Vue.js is a JavaScript framework used for building interactive web user interfaces.
+I used Vue with TypeScript to create another frontend for my existing Task Manager application.
+The Vue frontend communicates with my ASP.NET Core REST API to retrieve and modify task data.
+Creating the Vue Project
+I created the Vue project using npm create vue@latest and named it taskmanager-vue.
+I enabled TypeScript, Linter, and Prettier while keeping unnecessary features such as Router and Pinia disabled.
+I selected the blank project option so I could build the Task Manager interface from scratch.
+npm
+npm is the package manager used to install and manage the dependencies required by the Vue project.
+I installed the project's dependencies using npm install, with --legacy-peer-deps needed to resolve a dependency conflict.
+I started the Vue development server using npm run dev.
+Vite
+Vite provides the development and build environment used by my Vue application.
+It runs a local development server and automatically updates the browser when source files change.
+My Vue application ran locally at http://localhost:5173.
+TypeScript
+TypeScript extends JavaScript by adding features such as static types and interfaces.
+I used TypeScript inside Vue's <script setup lang="ts"> section to define the application's logic.
+I defined the structure of each task using properties for id, title, and isCompleted.
+App.vue
+App.vue is the main Vue component that I used to build the Task Manager interface.
+It contains the application logic, HTML-like template, and component-specific CSS styling.
+I implemented the task input, task list, Add, Complete, and Delete functionality inside this component.
+Vue Single-File Component
+Vue allows a component's logic, template, and styling to be stored together in a .vue file.
+I used <script setup> for TypeScript logic, <template> for the interface, and <style scoped> for styling.
+This structure keeps the functionality and presentation of a component organised in one file.
+ref()
+ref() creates reactive data that Vue monitors for changes.
+I used ref<TaskItem[]>([]) to store the tasks and ref("") to store the task title entered by the user.
+When these values change, Vue automatically updates the relevant parts of the interface.
+v-model
+v-model provides two-way data binding between an input element and reactive Vue data.
+I connected the task input field to the title variable using v-model="title".
+When the user types into the input, the value of title is automatically updated.
+Vue Template Interpolation
+Vue uses double curly braces {{ }} to display JavaScript or TypeScript values inside a template.
+I used interpolation to display properties such as the task ID, title, and completion status.
+Vue automatically updates the displayed values whenever the underlying reactive data changes.
+v-for
+v-for is a Vue directive used to repeat an element for every item in a collection.
+I used v-for="task in tasks" to display every task retrieved from the backend.
+I used :key="task.id" so Vue could uniquely identify each displayed task.
+v-if
+v-if conditionally displays an element depending on whether an expression is true.
+I used v-if="!task.isCompleted" to show the Complete button only for pending tasks.
+Once a task is completed, Vue removes its Complete button from the interface.
+@click
+@click is Vue's event-handling syntax for responding to mouse clicks.
+I used it to call functions such as addTask, completeTask, and deleteTask.
+This connected the buttons in the user interface to the application's TypeScript functions.
+onMounted()
+onMounted() runs code after a Vue component has been mounted into the page.
+I used onMounted() to call loadTasks() when the Task Manager first opened.
+This automatically retrieved the existing tasks from my ASP.NET Core API.
+Fetch API
+I used the browser's fetch() function to communicate between Vue and my ASP.NET Core REST API.
+The frontend sends HTTP requests to http://localhost:5227/api/tasks.
+I used GET, POST, PUT, and DELETE requests to perform the Task Manager operations.
+Loading Tasks — GET
+I created loadTasks() to send a GET request to the ASP.NET Core API.
+The JSON response from the API is assigned to tasks.value so Vue can display the records.
+This allowed existing SQL Server tasks to automatically appear when the Vue application loaded.
+Adding Tasks — POST
+I created addTask() to send a POST request containing the title and completion status of a new task.
+The task information is converted to JSON using JSON.stringify() before being sent to the API.
+After the task is created, I clear the input and call loadTasks() to refresh the displayed list.
+Completing Tasks — PUT
+I created completeTask() to send a PUT request for the selected task ID.
+The request sends the existing task title with isCompleted changed to true.
+After the API updates SQL Server, the Vue task list is refreshed to display the task as Completed.
+Deleting Tasks — DELETE
+I created deleteTask() to send a DELETE request containing the ID of the selected task.
+The ASP.NET Core API uses the ID to remove the corresponding task from the database.
+I reload the task list after deletion so the removed task disappears from the Vue interface.
+ASP.NET Core API Integration
+I reused the ASP.NET Core REST API that I created during my previous practical instead of creating another backend.
+The API was running locally at http://localhost:5227, while Vue was running at http://localhost:5173.
+This demonstrated that different frontend frameworks can communicate with the same backend API.
+CORS
+My Vue application initially displayed no tasks even though the API returned task data correctly in the browser.
+The browser showed a Failed to fetch error because the Vue frontend and ASP.NET Core API were running on different origins.
+I configured CORS in ASP.NET Core to allow requests from http://localhost:5173, which fixed the communication problem.
+CORS Configuration
+I created an ASP.NET Core CORS policy that allowed the Vue frontend origin using .WithOrigins("http://localhost:5173").
+I allowed the required request headers and HTTP methods using .AllowAnyHeader() and .AllowAnyMethod().
+I activated the policy with app.UseCors("AllowFrontend") before testing the Vue application again.
+Browser Developer Tools
+I used the browser Developer Tools Console to troubleshoot why Vue was not displaying the API data.
+The Console showed TypeError: Failed to fetch and net::ERR_FAILED, which helped isolate the frontend-to-backend communication problem.
+After configuring CORS and restarting the API, the existing SQL Server tasks successfully appeared in Vue.
+Full-Stack Architecture
+My Vue frontend sends HTTP requests to an ASP.NET Core REST API written in C#.
+The ASP.NET Core backend uses Entity Framework Core to communicate with the SQL Server TaskManagerDB database.
+The complete architecture is Vue + TypeScript → ASP.NET Core API → Entity Framework Core → SQL Server.
+Reusing the Existing Backend
+I learned that changing the frontend framework does not require rebuilding the entire application.
+My existing ASP.NET Core API provides the same REST endpoints regardless of whether React or Vue calls them.
+This allowed my React and Vue applications to use the same backend, database, and task data.
+React vs Vue
+Both React and Vue can create component-based user interfaces and communicate with REST APIs.
+React uses features such as useState, useEffect, JSX, and event props, while Vue uses ref, onMounted, templates, and directives.
+Building the same Task Manager in both frameworks helped me understand different approaches to solving the same frontend problem.
+Practical Outcome
+I built a Vue.js and TypeScript Task Manager frontend based on the Task Manager application from my previous practical.
+The application can retrieve, add, complete, and delete tasks through an ASP.NET Core REST API with persistent SQL Server storage.
+I learned Vue fundamentals, reactive state, directives, event handling, API communication, CORS configuration, and full-stack integration.
