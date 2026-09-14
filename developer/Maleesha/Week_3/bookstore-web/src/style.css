@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6a35c;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
