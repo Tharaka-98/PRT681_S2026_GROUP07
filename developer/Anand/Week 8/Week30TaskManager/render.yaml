@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: task-manager-api
+    runtime: docker
+    rootDir: TaskApi
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://+:10000
+      - key: ConnectionStrings__TasksDatabase
+        value: Data Source=/var/data/tasks-api.db
+      - key: FrontendOrigin
+        sync: false
+    disk:
+      name: task-data
+      mountPath: /var/data
+      sizeGB: 1
+
+  - type: web
+    name: task-manager-frontend
+    runtime: docker
+    rootDir: react-frontend
+    envVars:
+      - key: API_URL
+        sync: false

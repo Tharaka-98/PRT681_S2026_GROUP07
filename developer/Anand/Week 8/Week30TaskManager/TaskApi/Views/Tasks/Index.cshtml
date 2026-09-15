@@ -1,0 +1,71 @@
+@model IReadOnlyList<TaskApi.Models.TaskItem>
+@{
+    ViewData["Title"] = "Task Manager MVC";
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="/css/site.css?v=3" />
+</head>
+<body>
+    <main class="shell">
+        <header class="hero">
+            <p class="eyebrow">Week 3 MVC demonstration</p>
+            <h1>Task Manager</h1>
+            <p>ASP.NET Core MVC view backed by Entity Framework Core and SQLite.</p>
+        </header>
+
+        <section class="panel">
+            <h2>Add a task</h2>
+            <form action="/tasks/create" method="post" class="task-form">
+                <div class="field">
+                    <label for="title">Title</label>
+                    <input id="title" name="title" required maxlength="120" placeholder="Prepare deployment notes" />
+                </div>
+                <div class="field">
+                    <label for="description">Description</label>
+                    <input id="description" name="description" maxlength="300" placeholder="Optional details" />
+                </div>
+                <button type="submit">Add task</button>
+            </form>
+        </section>
+
+        <section class="task-list" aria-label="Tasks">
+            <div class="list-heading">
+                <h2>Tasks</h2>
+                <span class="count">@Model.Count total</span>
+            </div>
+            @if (Model.Count == 0)
+            {
+                <p class="empty">No tasks yet. Add your first task above.</p>
+            }
+            else
+            {
+                @foreach (TaskApi.Models.TaskItem task in Model)
+                {
+                    <article class="task @(task.IsComplete ? "complete" : "")">
+                        <div>
+                            <h3>@task.Title</h3>
+                            <p>@(task.Description ?? "No description")</p>
+                            <small class="status @(task.IsComplete ? "status-complete" : "status-open")">@(task.IsComplete ? "Complete" : "Open")</small>
+                        </div>
+                        <div class="actions">
+                            <form action="/tasks/toggle" method="post">
+                                <input type="hidden" name="id" value="@task.Id" />
+                                <button type="submit">@(task.IsComplete ? "Reopen" : "Complete")</button>
+                            </form>
+                            <form action="/tasks/delete" method="post">
+                                <input type="hidden" name="id" value="@task.Id" />
+                                <button type="submit" class="danger">Delete</button>
+                            </form>
+                        </div>
+                    </article>
+                }
+            }
+        </section>
+    </main>
+</body>
+</html>

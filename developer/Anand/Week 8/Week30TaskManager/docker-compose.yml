@@ -1,0 +1,27 @@
+services:
+  api:
+    build:
+      context: ./TaskApi
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__TasksDatabase: Data Source=/data/tasks-api.db
+      FrontendOrigin: http://localhost:5173
+    ports:
+      - "5000:8080"
+    volumes:
+      - task-data:/data
+
+  frontend:
+    build:
+      context: ./react-frontend
+    environment:
+      PORT: 8080
+      API_URL: http://localhost:5000/api/tasks
+    ports:
+      - "5173:8080"
+    depends_on:
+      - api
+
+volumes:
+  task-data:

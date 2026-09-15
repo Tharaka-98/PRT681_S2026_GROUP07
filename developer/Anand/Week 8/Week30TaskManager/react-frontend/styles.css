@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #17252b;
+  background: #edf3f2;
+  line-height: 1.5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+main { width: min(1000px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 72px; }
+.app-header { padding: 32px 0 30px; }
+.app-header h1 { margin: 0; color: #132c33; font-size: clamp(2.4rem, 7vw, 4.7rem); line-height: 1.02; letter-spacing: -.03em; }
+.app-header p { max-width: 620px; margin: 16px 0 0; color: #5a6e72; font-size: 1.06rem; }
+.task-form, .task-list { margin-bottom: 22px; padding: 26px; border: 1px solid #d5e2e0; border-radius: 10px; background: #fff; box-shadow: 0 12px 28px rgba(24, 59, 62, .06); }
+.task-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) auto; gap: 14px; }
+input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid #b9ccca; border-radius: 6px; padding: 0 13px; color: #17252b; background: #fbfdfd; font: inherit; outline: 0; }
+input:focus { border-color: #087f7d; box-shadow: 0 0 0 3px rgba(8, 127, 125, .15); }
+button { min-height: 42px; border: 0; border-radius: 6px; padding: 10px 15px; background: #087f7d; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+button:hover { background: #066864; }
+.task-card { display: grid; grid-template-columns: 1fr auto; gap: 18px; padding: 18px 0; border-bottom: 1px solid #e5eeec; }
+.task-card:last-child { border-bottom: 0; }
+.task-card h2 { margin: 0 0 4px; color: #17343b; font-size: 1rem; }
+.task-card p { margin: 0 0 8px; color: #63787a; }
+.task-card.done h2 { color: #718185; text-decoration: line-through; }
+.task-actions { display: flex; align-items: center; gap: 8px; }
+.ghost-button { color: #086b68; background: #e1f2ef; }
+.ghost-button:hover { color: #fff; background: #087f7d; }
+.danger-button { background: #b6483a; }
+.danger-button:hover { background: #92372c; }
+.status { display: inline-block; margin-top: 3px; border-radius: 999px; padding: 3px 9px; color: #637274; background: #edf1f0; font-size: .75rem; font-weight: 800; }
+.message { margin: 0 0 14px; color: #a24732; font-weight: 700; }
+@media (max-width: 720px) { main { width: min(100% - 28px, 560px); padding-top: 24px; } .app-header { padding: 22px 0 24px; } .task-form { grid-template-columns: 1fr; } .task-form button { width: 100%; } .task-card { grid-template-columns: 1fr; } .task-actions { justify-content: flex-start; } }
