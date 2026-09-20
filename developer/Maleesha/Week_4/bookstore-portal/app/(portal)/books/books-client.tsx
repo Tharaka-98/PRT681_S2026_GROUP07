@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@progress/kendo-react-buttons";
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { booksApi, Book, Author } from "@/lib/api";
+import Modal from "@/components/Modal";
+import ConfirmDialog, { ConfirmDialogHandle } from "@/components/ConfirmDialog";
 
 interface FormState {
   title: string;
@@ -34,6 +35,7 @@ export default function BooksClient({ initialBooks, authors }: { initialBooks: B
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
+  const confirmRef = useRef<ConfirmDialogHandle>(null);
 
   function showToast(message: string, type: "success" | "error") {
     setToast({ message, type });
@@ -101,7 +103,11 @@ export default function BooksClient({ initialBooks, authors }: { initialBooks: B
   }
 
   async function handleDelete(book: Book) {
-    if (!confirm(`Delete "${book.title}"?`)) return;
+    const confirmed = await confirmRef.current?.open({
+      title: "Delete Book",
+      message: `Delete "${book.title}"? This can't be undone.`,
+    });
+    if (!confirmed) return;
     try {
       await booksApi.remove(book.id);
       showToast("Book deleted", "success");
@@ -133,7 +139,6 @@ export default function BooksClient({ initialBooks, authors }: { initialBooks: B
         </Button>
       </div>
 
-      {/* Stats strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 animate-fadeUp" style={{ animationDelay: "0.05s" }}>
         {[
           { label: "Total Titles", value: books.length, accent: "from-amber-500 to-amber-700" },
@@ -220,8 +225,29 @@ export default function BooksClient({ initialBooks, authors }: { initialBooks: B
       )}
 
       {showModal && (
-        <Dialog title={editing ? "Edit Book" : "Add Book"} onClose={() => setShowModal(false)}>
-          <div className="flex flex-col gap-4 min-w-[280px]">
+        <Modal
+          title={editing ? "Edit Book" : "Add Book"}
+          onClose={() => setShowModal(false)}
+          footer={
+            <>
+              <button
+                onClick={() => setShowModal(false)}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg border border-stone-200 text-stone-600 font-medium hover:bg-stone-50 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-700 to-amber-800 text-white font-semibold hover:shadow-md transition disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+            </>
+          }
+        >
+          <div className="flex flex-col gap-4 py-2">
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-1">Title</label>
               <Input
@@ -285,14 +311,7 @@ export default function BooksClient({ initialBooks, authors }: { initialBooks: B
               </div>
             </div>
           </div>
-
-          <DialogActionsBar>
-            <Button onClick={() => setShowModal(false)} disabled={saving}>Cancel</Button>
-            <Button themeColor="primary" onClick={handleSave} disabled={saving}>
-              {saving ? "Saving..." : "Save"}
-            </Button>
-          </DialogActionsBar>
-        </Dialog>
+        </Modal>
       )}
 
       {toast && (
@@ -304,6 +323,8 @@ export default function BooksClient({ initialBooks, authors }: { initialBooks: B
           {toast.message}
         </div>
       )}
+
+      <ConfirmDialog ref={confirmRef} />
     </div>
   );
 }

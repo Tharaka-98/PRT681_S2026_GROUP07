@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@progress/kendo-react-buttons";
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { authorsApi, Author } from "@/lib/api";
+import Modal from "@/components/Modal";
+import ConfirmDialog, { ConfirmDialogHandle } from "@/components/ConfirmDialog";
 
 interface FormState {
   name: string;
@@ -16,12 +17,7 @@ const emptyForm: FormState = { name: "", country: "", bio: "" };
 const avatarPalette = ["#92400e", "#7c2d12", "#78350f", "#a16207", "#1e3a5f", "#3f4a3d", "#4a044e"];
 
 function initials(name: string) {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  return name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 }
 
 function colorFor(name: string) {
@@ -37,6 +33,7 @@ export default function AuthorsClient({ initialAuthors }: { initialAuthors: Auth
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
+  const confirmRef = useRef<ConfirmDialogHandle>(null);
 
   function showToast(message: string, type: "success" | "error") {
     setToast({ message, type });
@@ -90,7 +87,11 @@ export default function AuthorsClient({ initialAuthors }: { initialAuthors: Auth
   }
 
   async function handleDelete(author: Author) {
-    if (!confirm(`Delete "${author.name}"?`)) return;
+    const confirmed = await confirmRef.current?.open({
+      title: "Delete Author",
+      message: `Delete "${author.name}"? This can't be undone.`,
+    });
+    if (!confirmed) return;
     try {
       await authorsApi.remove(author.id);
       showToast("Author deleted", "success");
@@ -167,9 +168,7 @@ export default function AuthorsClient({ initialAuthors }: { initialAuthors: Auth
                     </p>
                   </div>
                 </div>
-                {author.bio && (
-                  <p className="text-sm text-stone-600 mt-3.5 line-clamp-3 leading-relaxed">{author.bio}</p>
-                )}
+                {author.bio && <p className="text-sm text-stone-600 mt-3.5 line-clamp-3 leading-relaxed">{author.bio}</p>}
                 <div className="flex gap-2 mt-4 pt-4 border-t border-stone-100">
                   <button
                     onClick={() => openEdit(author)}
@@ -191,8 +190,29 @@ export default function AuthorsClient({ initialAuthors }: { initialAuthors: Auth
       )}
 
       {showModal && (
-        <Dialog title={editing ? "Edit Author" : "Add Author"} onClose={() => setShowModal(false)}>
-          <div className="flex flex-col gap-4 min-w-[280px]">
+        <Modal
+          title={editing ? "Edit Author" : "Add Author"}
+          onClose={() => setShowModal(false)}
+          footer={
+            <>
+              <button
+                onClick={() => setShowModal(false)}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg border border-stone-200 text-stone-600 font-medium hover:bg-stone-50 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-700 to-amber-800 text-white font-semibold hover:shadow-md transition disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+            </>
+          }
+        >
+          <div className="flex flex-col gap-4 py-2">
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-1">Name</label>
               <Input
@@ -217,21 +237,10 @@ export default function AuthorsClient({ initialAuthors }: { initialAuthors: Auth
 
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-1">Bio (optional)</label>
-              <TextArea
-                value={form.bio}
-                onChange={(e) => setForm({ ...form, bio: String(e.value ?? "") })}
-                rows={3}
-              />
+              <TextArea value={form.bio} onChange={(e) => setForm({ ...form, bio: String(e.value ?? "") })} rows={3} />
             </div>
           </div>
-
-          <DialogActionsBar>
-            <Button onClick={() => setShowModal(false)} disabled={saving}>Cancel</Button>
-            <Button themeColor="primary" onClick={handleSave} disabled={saving}>
-              {saving ? "Saving..." : "Save"}
-            </Button>
-          </DialogActionsBar>
-        </Dialog>
+        </Modal>
       )}
 
       {toast && (
@@ -243,6 +252,8 @@ export default function AuthorsClient({ initialAuthors }: { initialAuthors: Auth
           {toast.message}
         </div>
       )}
+
+      <ConfirmDialog ref={confirmRef} />
     </div>
   );
 }

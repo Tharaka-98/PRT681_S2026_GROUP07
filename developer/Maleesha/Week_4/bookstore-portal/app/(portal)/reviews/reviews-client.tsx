@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@progress/kendo-react-buttons";
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, TextArea, NumericTextBox } from "@progress/kendo-react-inputs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { reviewsApi, Review, Book } from "@/lib/api";
+import Modal from "@/components/Modal";
+import ConfirmDialog, { ConfirmDialogHandle } from "@/components/ConfirmDialog";
 
 interface FormState {
   bookId: number | null;
@@ -23,6 +24,7 @@ export default function ReviewsClient({ initialReviews, books }: { initialReview
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
+  const confirmRef = useRef<ConfirmDialogHandle>(null);
 
   function showToast(message: string, type: "success" | "error") {
     setToast({ message, type });
@@ -72,7 +74,11 @@ export default function ReviewsClient({ initialReviews, books }: { initialReview
   }
 
   async function handleDelete(review: Review) {
-    if (!confirm("Delete this review?")) return;
+    const confirmed = await confirmRef.current?.open({
+      title: "Delete Review",
+      message: `Delete this review by ${review.reviewerName}? This can't be undone.`,
+    });
+    if (!confirmed) return;
     try {
       await reviewsApi.remove(review.id);
       showToast("Review deleted", "success");
@@ -143,9 +149,7 @@ export default function ReviewsClient({ initialReviews, books }: { initialReview
                   <span className="text-stone-200">{"★".repeat(5 - review.rating)}</span>
                 </div>
               </div>
-              {review.comment && (
-                <p className="text-sm text-stone-600 mt-3.5 italic leading-relaxed">&ldquo;{review.comment}&rdquo;</p>
-              )}
+              {review.comment && <p className="text-sm text-stone-600 mt-3.5 italic leading-relaxed">&ldquo;{review.comment}&rdquo;</p>}
               <div className="flex gap-2 mt-4 pt-4 border-t border-stone-100">
                 <button
                   onClick={() => handleDelete(review)}
@@ -160,8 +164,29 @@ export default function ReviewsClient({ initialReviews, books }: { initialReview
       )}
 
       {showModal && (
-        <Dialog title="Add Review" onClose={() => setShowModal(false)}>
-          <div className="flex flex-col gap-4 min-w-[280px]">
+        <Modal
+          title="Add Review"
+          onClose={() => setShowModal(false)}
+          footer={
+            <>
+              <button
+                onClick={() => setShowModal(false)}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg border border-stone-200 text-stone-600 font-medium hover:bg-stone-50 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-700 to-amber-800 text-white font-semibold hover:shadow-md transition disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+            </>
+          }
+        >
+          <div className="flex flex-col gap-4 py-2">
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-1">Book</label>
               <DropDownList
@@ -203,21 +228,10 @@ export default function ReviewsClient({ initialReviews, books }: { initialReview
 
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-1">Comment (optional)</label>
-              <TextArea
-                value={form.comment}
-                onChange={(e) => setForm({ ...form, comment: String(e.value ?? "") })}
-                rows={3}
-              />
+              <TextArea value={form.comment} onChange={(e) => setForm({ ...form, comment: String(e.value ?? "") })} rows={3} />
             </div>
           </div>
-
-          <DialogActionsBar>
-            <Button onClick={() => setShowModal(false)} disabled={saving}>Cancel</Button>
-            <Button themeColor="primary" onClick={handleSave} disabled={saving}>
-              {saving ? "Saving..." : "Save"}
-            </Button>
-          </DialogActionsBar>
-        </Dialog>
+        </Modal>
       )}
 
       {toast && (
@@ -229,6 +243,8 @@ export default function ReviewsClient({ initialReviews, books }: { initialReview
           {toast.message}
         </div>
       )}
+
+      <ConfirmDialog ref={confirmRef} />
     </div>
   );
 }
