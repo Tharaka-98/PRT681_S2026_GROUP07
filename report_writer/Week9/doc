@@ -1,1 +1,17 @@
+For **Week 4**, I completed the following activities:
+
+* Imported a **geographic CSV dataset** into a **Microsoft Fabric Lakehouse**.
+* Loaded the CSV into a Fabric table and created a **Direct Lake semantic model**.
+* Connected the semantic model to **Power BI Desktop**.
+* Created KPI measures for **Total Sales, Total Profit, Profit Margin, and Total Orders**.
+* Built an **ArcGIS map** using latitude and longitude data.
+* Created an **Australia Shape Map** to display sales geographically.
+* Practised using **GeoJSON/TopoJSON custom map files** and checked map keys.
+* Created a proper **Date table** and linked it to the sales data.
+* Developed advanced DAX measures for **YTD Sales, Previous Year Sales, and YoY Sales Change**.
+* Created a **dynamic sales performance segmentation** measure.
+* Built a **monthly sales trend line chart** and a **territory sales bar chart**.
+* Added interactive **Year, Territory, and Category slicers**.
+* Arranged all visuals into a complete **interactive spatial sales dashboard**.
+* Improved my understanding of **spatial reporting, time intelligence, Direct Lake, DAX, and Microsoft Fabric integration**.
 
