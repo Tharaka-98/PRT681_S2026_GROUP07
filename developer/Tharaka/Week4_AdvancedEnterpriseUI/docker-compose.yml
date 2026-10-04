@@ -1,0 +1,42 @@
+# Week 4 - two Linux containers, no host dependencies beyond Docker.
+#   docker compose up --build
+#   portal  -> http://localhost:3000
+#   api     -> http://localhost:8080/swagger
+services:
+  api:
+    build: ./TaskManagerAPI
+    image: week4-taskmanager-api
+    container_name: week4-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DB_PATH: /app/data/tasks.db
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost
+    volumes:
+      - api-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  portal:
+    build:
+      context: ./portal
+      args:
+        # Container-to-container, so the service name - not localhost
+        API_BASE_URL: http://api:8080
+    image: week4-enterprise-portal
+    container_name: week4-portal
+    ports:
+      - "3000:3000"
+    environment:
+      API_BASE_URL: http://api:8080
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  api-data:
