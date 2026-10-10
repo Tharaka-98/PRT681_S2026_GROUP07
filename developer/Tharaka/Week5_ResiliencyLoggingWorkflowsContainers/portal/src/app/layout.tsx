@@ -1,0 +1,19 @@
+import type { Metadata } from 'next';
+import './globals.css';
+import AppShell from '@/components/shell/AppShell';
+
+export const metadata: Metadata = {
+  title: 'Enterprise Task Portal',
+  description:
+    'Week 4 - Next.js App Router management portal built with KendoReact and DevExtreme components'
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <AppShell>{children}</AppShell>
+      </body>
+    </html>
+  );
+}

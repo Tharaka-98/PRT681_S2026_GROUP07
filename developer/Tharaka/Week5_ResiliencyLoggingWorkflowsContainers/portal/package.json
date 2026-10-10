@@ -1,0 +1,49 @@
+{
+  "name": "enterprise-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Week 4 - Next.js App Router management portal using KendoReact and DevExtreme",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "15.5.27",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "zod": "^3.23.8",
+    "@progress/kendo-data-query": "^1.7.0",
+    "@progress/kendo-licensing": "^1.5.0",
+    "@progress/kendo-svg-icons": "^4.0.0",
+    "@progress/kendo-theme-default": "^14.6.0",
+    "@progress/kendo-react-animation": "16.1.0",
+    "@progress/kendo-react-buttons": "16.1.0",
+    "@progress/kendo-react-common": "16.1.0",
+    "@progress/kendo-react-data-tools": "16.1.0",
+    "@progress/kendo-react-dateinputs": "16.1.0",
+    "@progress/kendo-react-dialogs": "16.1.0",
+    "@progress/kendo-react-dropdowns": "16.1.0",
+    "@progress/kendo-react-form": "16.1.0",
+    "@progress/kendo-react-grid": "16.1.0",
+    "@progress/kendo-react-indicators": "16.1.0",
+    "@progress/kendo-react-inputs": "16.1.0",
+    "@progress/kendo-react-intl": "16.1.0",
+    "@progress/kendo-react-labels": "16.1.0",
+    "@progress/kendo-react-layout": "16.1.0",
+    "@progress/kendo-react-notification": "16.1.0",
+    "@progress/kendo-react-progressbars": "16.1.0",
+    "@progress/kendo-react-scheduler": "16.1.0",
+    "@progress/kendo-react-tooltip": "16.1.0",
+    "devextreme": "26.1.5",
+    "devextreme-react": "26.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,75 @@
+services:
+  api:
+    build: ./TaskManagerAPI
+    image: tharaka-week5-taskmanager-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DB_PATH: /app/data/tasks.db
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost
+      Seq__ServerUrl: http://seq:5341
+      Temporal__Address: temporal:7233
+      Smtp__Host: mailpit
+      Smtp__Port: 1025
+      Exceptionless__ApiKey: ${EXCEPTIONLESS_API_KEY:-}
+      Exceptionless__ServerUrl: ${EXCEPTIONLESS_SERVER_URL:-https://collector.exceptionless.com}
+    volumes:
+      - api-data:/app/data
+    depends_on:
+      temporal:
+        condition: service_started
+      seq:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  portal:
+    build:
+      context: ./portal
+      args:
+        API_BASE_URL: http://api:8080
+    image: tharaka-week5-enterprise-portal
+    ports:
+      - "3000:3000"
+    environment:
+      API_BASE_URL: http://api:8080
+    depends_on:
+      api:
+        condition: service_healthy
+
+  seq:
+    image: datalust/seq:2024.3
+    environment:
+      ACCEPT_EULA: Y
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    volumes:
+      - seq-data:/data
+
+  temporal:
+    image: temporalio/temporal:latest
+    command: ["server", "start-dev", "--ip", "0.0.0.0", "--db-filename", "/var/lib/temporal/temporal.db"]
+    ports:
+      - "7233:7233"
+      - "8233:8233"
+    volumes:
+      - temporal-data:/var/lib/temporal
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  api-data:
+  seq-data:
+  temporal-data:
